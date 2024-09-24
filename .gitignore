@@ -1,7 +1,7 @@
-key_gen.py
 Include
 Lib
 Scripts
 pyvenv.cfg
 .env
-signature.py
+auth/
+data/

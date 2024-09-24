@@ -6,8 +6,8 @@ import requests
 import os
 import time
 from dotenv import load_dotenv
-from signature import sign_key
-from printer import *
+from auth.signature import sign_key
+from data.fetch_data import *
 
 load_dotenv()
 
@@ -28,15 +28,16 @@ def fetch_account_details ():
     res = requests.get(url, headers=headers)
 
     if res.status_code == 200:
-        print_account_details(res.json())
+        return res.json()
         
     else:
         print("Error:", res.text)
         return None
 
 # Function to fetch data on prices
-def fetch_price_details (symbol):
-    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbol}'
+def fetch_price_details ():
+    symbols = fetch_symbols() 
+    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbols}'
     method = 'GET'
     time_stamp = str(int(time.time()))
     headers = {
@@ -45,12 +46,26 @@ def fetch_price_details (symbol):
         'x-signature': sign_key(url, method),
         'Content-Type': 'application/json; charset=utf-8',
     }
+    results = {}
 
     res = requests.get(url, headers=headers)
 
     if res.status_code == 200:
-        print_price_details(res.json())
+        data = res.json()
+        for crypto in data['results']:
+            results[crypto['symbol']] = float(crypto['price'])
+        
+        return results
         
     else:
         print("Error: ", res.text)
         return None
+
+# Function that fetches the time period that the bot monitors the crypto
+def fetch_time_details():
+    time_period = fetch_time_period()
+    return time_period
+
+def fetch_holding_details():
+    holdings = fetch_crypto_holdings()
+    return holdings
