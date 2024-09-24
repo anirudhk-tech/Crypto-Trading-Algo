@@ -33,3 +33,24 @@ def fetch_account_details ():
     else:
         print("Error:", res.text)
         return None
+
+# Function to fetch data on prices
+def fetch_price_details (symbol):
+    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbol}'
+    method = 'GET'
+    time_stamp = str(int(time.time()))
+    headers = {
+        'x-api-key': key,
+        'x-timestamp': time_stamp,
+        'x-signature': sign_key(url, method),
+        'Content-Type': 'application/json; charset=utf-8',
+    }
+
+    res = requests.get(url, headers=headers)
+
+    if res.status_code == 200:
+        print_price_details(res.json())
+        
+    else:
+        print("Error: ", res.text)
+        return None
