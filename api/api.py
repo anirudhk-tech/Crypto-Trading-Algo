@@ -37,7 +37,7 @@ def fetch_account_details ():
 # Function to fetch data on prices
 def fetch_price_details ():
     symbols = fetch_symbols() 
-    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbols}'
+    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbols}&side=ask'
     method = 'GET'
     time_stamp = str(int(time.time()))
     headers = {
@@ -66,6 +66,12 @@ def fetch_time_details():
     time_period = fetch_time_period()
     return time_period
 
+# Function that fetches details on how many stocks user owns
 def fetch_holding_details():
     holdings = fetch_crypto_holdings()
     return holdings
+
+# Function that fetches the thresholds for buy and sell
+def fetch_threshold_details():
+    buy_sell = fetch_thresholds()
+    return buy_sell

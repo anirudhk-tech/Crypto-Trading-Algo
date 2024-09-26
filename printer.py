@@ -35,3 +35,8 @@ def print_holding_details (data):
             whitespace_string += " "
         
         print(f"{crypto}{whitespace_string}|  {data[crypto]}")
+
+# Function to print buy and sell details
+def print_threshold_details (data):
+    print(f"BUY: {data['buy']}")
+    print(f"SELL: {data['sell']}")

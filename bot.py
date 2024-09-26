@@ -20,6 +20,7 @@ def prompt ():
     print("(2) View current holdings")
     print("(3) View monitored crypto")
     print("(4) Adjust period of monitoring")
+    print("(5) Adjust buy and sell thresholds")
     print("(q) Quit\n")
 
     global query
@@ -52,4 +53,10 @@ while query != 'q':
         print("\n-----------------------------------------------------")
         results = fetch_time_details()
         print_time_details(results)
+        print("-----------------------------------------------------") 
+
+    if query == '5':
+        print("\n-----------------------------------------------------")
+        results = fetch_threshold_details()
+        print_threshold_details(results)
         print("-----------------------------------------------------") 
