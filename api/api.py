@@ -4,10 +4,13 @@ Connecting file between RobinHood API and program. Sending orders, fetching data
 
 import requests
 import os
+import json
 import time
+import uuid
 from dotenv import load_dotenv
 from auth.signature import sign_key
 from data.fetch_data import *
+from calcs import calc_quanity
 
 load_dotenv()
 
@@ -21,7 +24,7 @@ def fetch_account_details ():
     headers = {
         'x-api-key': key,
         'x-timestamp': time_stamp,
-        'x-signature': sign_key(url, method),
+        'x-signature': sign_key(url, time_stamp, method),
         'Content-Type': 'application/json; charset=utf-8',
     }
 
@@ -35,43 +38,55 @@ def fetch_account_details ():
         return None
 
 # Function to fetch data on prices
-def fetch_price_details ():
-    symbols = fetch_symbols() 
-    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbols}&side=ask'
+def fetch_ask_price (symbol):
+    url = f'https://trading.robinhood.com/api/v1/crypto/marketdata/best_bid_ask/?symbol={symbol}&side=ask'
     method = 'GET'
     time_stamp = str(int(time.time()))
     headers = {
         'x-api-key': key,
         'x-timestamp': time_stamp,
-        'x-signature': sign_key(url, method),
+        'x-signature': sign_key(url, method, time_stamp),
         'Content-Type': 'application/json; charset=utf-8',
     }
-    results = {}
 
     res = requests.get(url, headers=headers)
-
+    
     if res.status_code == 200:
         data = res.json()
-        for crypto in data['results']:
-            results[crypto['symbol']] = float(crypto['price'])
-        
-        return results
-        
+        return data['results'][0]['price']
+                
     else:
         print("Error: ", res.text)
         return None
 
-# Function that fetches the time period that the bot monitors the crypto
-def fetch_time_details():
-    time_period = fetch_time_period()
-    return time_period
+# Function that places a order
+def place_buy_order (symbol, paid_currency):
+    url = f'https://trading.robinhood.com/api/v1/crypto/trading/orders/'
+    method = 'POST'
+    time_stamp = str(int(time.time()))
+    symbol_price = fetch_ask_price(symbol)
+    symbol_quantity = calc_quanity(symbol_price, paid_currency)
+    data = {
+        'client_order_id': str(uuid.uuid4()), # Random ID to prevent duplicates
+        'side': 'buy',
+        'symbol': symbol,
+        'type': 'market',
+        'market_order_config': {
+            'asset_quantity': str(symbol_quantity)
+        },
+    }
+    json_data = json.dumps(data)
+    headers = {
+        'x-api-key': key,
+        'x-timestamp': time_stamp,
+        'x-signature': sign_key(url, method, time_stamp, body=json_data),
+        'Content-Type': 'application/json; charset=utf-8',
+    }
 
-# Function that fetches details on how many stocks user owns
-def fetch_holding_details():
-    holdings = fetch_crypto_holdings()
-    return holdings
+    res = requests.post(url, headers=headers, data=json_data)
 
-# Function that fetches the thresholds for buy and sell
-def fetch_threshold_details():
-    buy_sell = fetch_thresholds()
-    return buy_sell
+    if res.status_code == 201:
+        print(f"Buy order for {symbol_quantity} {symbol} placed at {time_stamp}")
+                
+    else:
+        print("Error: ", res.text)
