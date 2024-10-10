@@ -108,7 +108,7 @@ def place_buy_order (symbol, paid_currency):
     res = requests.post(url, headers=headers, data=json_data)
 
     if res.status_code == 201:
-        print(f"Buy order for {symbol_quantity} {symbol} placed at {time_stamp}")
+        print(f"Buy order for {symbol_quantity} {symbol} placed at ${symbol_price}")
         change_holdings(symbol, symbol_quantity, symbol_price)
                 
     else:
@@ -141,7 +141,7 @@ def place_sell_order (symbol, symbol_quantity):
     res = requests.post(url, headers=headers, data=json_data)
 
     if res.status_code == 201:
-        print(f"Sell order for {symbol_quantity} {symbol} placed at {time_stamp}")
+        print(f"Sell order for {symbol_quantity} {symbol} placed at ${symbol_price}")
                 
     else:
         print("Error: ", res.text)
