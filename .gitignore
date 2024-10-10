@@ -3,5 +3,4 @@ Lib
 Scripts
 pyvenv.cfg
 .env
-auth/
-data/
+data/__pycache__

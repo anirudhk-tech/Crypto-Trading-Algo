@@ -1,0 +1,14 @@
+{
+    "active_crypto": {
+        "XLM-USD": {
+            "name": "Stellar",
+            "holdings": [
+
+            ]
+        }
+    },
+    "inactive_cypto": {},
+    "time_period": 10,
+    "buy_threshold": 0.10,
+    "thresholds": {}
+}
