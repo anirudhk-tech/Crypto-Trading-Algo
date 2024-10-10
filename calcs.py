@@ -6,4 +6,4 @@ File that contains necessary calculations throughout the bot
 def calc_quanity (symbol_price, paid_currency):
     quantity = paid_currency / float(symbol_price)
 
-    return round(quantity, 4)
+    return round(quantity, 2)

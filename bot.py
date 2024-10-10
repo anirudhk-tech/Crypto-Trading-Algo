@@ -12,4 +12,6 @@ algo_thread.daemon = True # Makes sure background task ends when program quits
 algo_thread.start()
 
 print("Welcome to Robinhood Trader Control!")
-place_buy_order('XLM-USD', 0.10)
+
+while True:
+    pass
